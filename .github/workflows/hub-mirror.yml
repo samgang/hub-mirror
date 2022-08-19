@@ -29,7 +29,7 @@ jobs:
       - name: Run code
         run: go run main.go --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_TOKEN }} --repository=${{ secrets.DOCKER_REPOSITORY }} --content='${{ github.event.issue.body }}' --maxContent=11 --outputPath=output.sh
       - name: Run code2
-        run: go run main.go --username=${{ secrets.DOCKER_USERNAME_CCR }} --password=${{ secrets.DOCKER_TOKEN_CCR }} --repository=${{ secrets.DOCKER_REPOSITORY_CCR }} --content='${{ github.event.issue.body }}' --maxContent=11 --outputPath=output.sh
+        run: go run main.go --username=${{ secrets.DOCKER_USERNAME_CCR }} --password=${{ secrets.DOCKER_TOKEN_CCR }} --repository=${{ secrets.DOCKER_REPOSITORY_CCR }} --content='${{ github.event.issue.body }}' --maxContent=11 --outputPath=output_ccr.sh
       # 4. 当成功输出 output.sh 文件时，为 issues 添加评论
       - name: Add comment
         if: ${{ hashFiles('output.sh') }}
