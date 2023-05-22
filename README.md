@@ -1,44 +1,59 @@
 # hub-mirror
 
-使用 docker.io 或其他镜像服务来提供（但不限于） gcr.io、k8s.gcr.io、quay.io、ghcr.io 等国外镜像加速下载服务
+使用 docker.io 或其他镜像服务来提供（但不限于） gcr.io、registry.k8s.io、k8s.gcr.io、quay.io、ghcr.io 等国外镜像加速下载服务
 
-# 为减少重复请求，合理利用资源，建议提前在 issues 搜索镜像是否已转换过
+为减少重复请求，合理利用资源，建议提前在 issues 搜索镜像是否已转换过
 
-示例：https://github.com/togettoyou/hub-mirror/issues?q=gcr.io%2Fgoogle-samples%2Fmicroservices-demo%2Femailservice%3Av0.3.5
+示例：[issues搜索gcr.io/google-samples/microservices-demo/emailservice:v0.3.5](https://github.com/togettoyou/hub-mirror/issues?q=gcr.io%2Fgoogle-samples%2Fmicroservices-demo%2Femailservice%3Av0.3.5)
 
-# 使用
+# 原理
 
-## ~~1. 白嫖我的，点个 Star ，直接提交 issues~~（目前本人 Docker 账号另有它用，本项目 Workflow 已关闭，建议使用方式 2 ）
+[无法拉取 gcr.io 镜像？用魔法来打败魔法](https://mp.weixin.qq.com/s/Vt0FRTx1PsoYFdLa0QZzWw)
 
-要求：严格按照模板规范提交，参考： [成功案例](https://github.com/togettoyou/hub-mirror/issues/1) ，[失败案例](https://github.com/togettoyou/hub-mirror/issues/2)
+<img src="https://user-images.githubusercontent.com/55381228/221747734-13783ce6-1969-4c10-acd6-833f5046aa85.png" width="300px">
 
-限制：每次提交最多 11 个镜像地址
+# 开始使用
 
-个人 Docker 账号有每日镜像拉取限额，请勿滥用
+## 方案一：白嫖我的，点个 Star ，直接提交 issues
 
-## 2. 自己动手，Fork 本项目，开启 issues 并绑定你自己的 DockerHub 账号或其他镜像服务账号
+要求：严格按照模板规范提交，参考： [成功案例](https://github.com/togettoyou/hub-mirror/issues/1)
+，[失败案例](https://github.com/togettoyou/hub-mirror/issues/2)
 
-开启 `Settings`-`Options`-`Features` 中的 `Issues` 功能
+> 当任务失败时，可以查看具体失败原因并修改 issues 主体内容，无需新建 issues
 
-- 如果要使用DockerHub的镜像服务
+限制：每次提交最多 11 个镜像地址（为啥是11个？因为我的第一次需求刚好要转换11个镜像🤣）
 
-    在 `Settings`-`Secrets` 新建 `DOCKER_USERNAME`（你的 Docker 用户名） 和 `DOCKER_TOKEN`（你的 Docker 密码） 两个 Secrets
-    
-- 如果需要使用其他镜像服务,例如腾讯云,阿里云
+本人 Docker 账号有每日镜像拉取限额，请勿滥用
 
-    在 `Settings`-`Secrets` 新建 `DOCKER_USERNAME`（你的其他镜像服务用户名） 和 `DOCKER_TOKEN`（你的其他镜像服务密码）以及 `DOCKER_REPOSITORY` 三个 Secrets
+## 方案二：自己动手，丰衣足食，Fork 本项目，绑定你自己的 DockerHub 账号或其他镜像服务账号
 
-    `DOCKER_REPOSITORY`配置例子 
-    
-    - 腾讯云: `ccr.ccs.tencentyun.com/xxxxxx`
-    - 阿里云: `registry.cn-hangzhou.aliyuncs.com/xxxxxx`
-    - 其他云...
+1. 绑定账号
 
-在 `Issues`-`Labels` 添加三个 label ：`hub-mirror`、`success`、`failure`
+    - 如果要使用 DockerHub 的镜像服务
 
-最后在 `Actions` 里选择 `hub-mirror` ，在右边 `···` 菜单里选择 `Enable Workflow`
+      在 `Settings`-`Secrets`-`Actions` 选择 `New repository secret` 新建 `DOCKER_USERNAME`（你的 Docker 用户名）
+      和 `DOCKER_TOKEN`（你的 Docker 密码） 两个 Secrets
 
-## 3. 已有魔法，本地使用
+    - 如果需要使用其他镜像服务,例如腾讯云、阿里云等
+
+      在 `Settings`-`Secrets`-`Actions` 选择 `New repository secret` 新建 `DOCKER_USERNAME`（你的其他镜像服务用户名）
+      和 `DOCKER_TOKEN`（你的其他镜像服务密码）以及 `DOCKER_REPOSITORY` 三个 Secrets
+
+      其中 `DOCKER_REPOSITORY` 配置例子：
+
+        - 腾讯云: `ccr.ccs.tencentyun.com/xxxxxx`
+        - 阿里云: `registry.cn-hangzhou.aliyuncs.com/xxxxxx`
+        - 等其他云...
+
+2. 在 Fork 的项目中开启 `Settings`-`General`-`Features` 中的 `Issues` 功能
+
+3. 在 Fork 的项目中修改 `Settings`-`Actions`-`General` 中的 `Workflow permissions` 为 `Read and write permissions`
+
+4. 在 `Issues`-`Labels` 选择 `New label` 依次添加三个 label ：`hub-mirror`、`success`、`failure`
+
+5. 在 `Actions` 里选择 `hub-mirror` ，在右边 `···` 菜单里选择 `Enable Workflow`
+
+## 方案三：已有魔法，支持本地使用
 
 ```shell
 $ go install github.com/togettoyou/hub-mirror@latest
@@ -50,6 +65,3 @@ $ hub-mirror --username=xxxxxx --password=xxxxxx --content='{ "hub-mirror": ["gc
 $ hub-mirror --username=xxxxxx --password=xxxxxx --repository=registry.cn-hangzhou.aliyuncs.com/xxxxxx --content='{ "hub-mirror": ["gcr.io/google-samples/microservices-demo/emailservice:v0.3.5","hello-world:latest"] }'
 ```
 
-# 教程
-
-https://mp.weixin.qq.com/s/Vt0FRTx1PsoYFdLa0QZzWw
